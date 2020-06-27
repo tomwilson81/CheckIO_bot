@@ -37,7 +37,7 @@ class CheckIOSolver:
         self.password = password
         self.google = "https://www.google.com/"
         self.base_url = "https://checkio.org"
-        self.SEARCH_TEXT = "Python checkIO "
+        self.SEARCH_TEXT = "Python checkIO solution "
         options = get_web_driver_options()
         set_browser_as_incognito(options)
         self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
@@ -125,16 +125,15 @@ class CheckIOSolver:
         self.driver.get(solution_link)
         time.sleep(3)
         try:
-            publications_code = self.driver.find_element_by_xpath("//div[@class='publications__info__code']")
-            solution_code = publications_code.find_element_by_xpath("//span[@style='padding-right: 0.1px;']")
+            publications_code = self.driver.find_element_by_xpath("//div[@class='CodeMirror-code']")
+            solution_code = publications_code.find_elements_by_xpath("//span[@style='padding-right: 0.1px;']")
             curr_google_solution_code = []
             for data in solution_code:
                 code_words = data.find_elements_by_css_selector('span')
                 code_line = ""
                 for word in code_words:
                     code_line += word.text
-                if len(code_line) > 0:
-                    curr_google_solution_code.append(code_line)
+                if len(code_line) > 0: curr_google_solution_code.append(code_line)
             return curr_google_solution_code
         except Exception as e:
             print(e)
@@ -208,4 +207,4 @@ class CheckIOSolver:
 if __name__ == '__main__':
     credentials = read_credentials()
     bot = CheckIOSolver(credentials['username'], credentials['password'])
-    bot.try_code()
+    bot.single_iteration_over_session()
